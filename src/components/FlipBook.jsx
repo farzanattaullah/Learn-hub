@@ -85,10 +85,10 @@ export default function FlipBook({
           <div className="absolute inset-5 sm:inset-6 border border-white/[0.12] rounded-xl pointer-events-none shadow-[inset_0_1px_2px_rgba(0,0,0,0.5),0_1px_1px_rgba(255,255,255,0.05)]" />
 
           {/* Top Brand Header */}
-          <div className="relative z-10 flex items-center justify-between">
+          <div className="relative z-10 flex items-center justify-between px-2 pt-1">
             <div className="flex items-center gap-2">
-              <Compass className="w-4 h-4 text-sky-300" />
-              <span className="text-[11px] font-mono uppercase tracking-[0.22em] text-slate-200 font-bold">
+              <Compass className="w-4 h-4 text-sky-300 shrink-0" />
+              <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-slate-200 font-bold">
                 STUDY OS
               </span>
             </div>
@@ -98,25 +98,25 @@ export default function FlipBook({
           </div>
 
           {/* Main Hero Copy */}
-          <div className="relative z-10 flex-1 flex flex-col justify-center space-y-5 my-auto max-w-[360px]">
+          <div className="relative z-10 flex-1 flex flex-col justify-center space-y-4 my-auto px-2 w-full max-w-full overflow-hidden">
             {/* Headline */}
-            <div className="space-y-1.5">
-              <h1 className="text-4xl sm:text-[46px] font-black tracking-tight text-white leading-[1.08]">
+            <div className="space-y-1">
+              <h1 className="font-sans text-2xl sm:text-[32px] font-extrabold tracking-tight text-white leading-[1.15] break-words">
                 Study smarter.
               </h1>
-              <h1 className="text-4xl sm:text-[46px] font-black tracking-tight leading-[1.08] text-slate-300">
+              <h1 className="font-sans text-2xl sm:text-[32px] font-extrabold tracking-tight leading-[1.15] text-slate-300 break-words">
                 Understand deeper.
               </h1>
             </div>
 
             {/* Subtitle */}
-            <p className="text-sm sm:text-[15px] text-slate-300 font-normal leading-[1.65]">
+            <p className="font-sans text-xs sm:text-[14px] text-slate-300 font-normal leading-[1.6] max-w-[290px]">
               Upload your notes and let AI create summaries, key questions, and spaced repetition quizzes.
             </p>
           </div>
 
           {/* Clean Bottom Footer with Small Get Started in Left Corner */}
-          <div className="relative z-10 flex items-center justify-between pt-3 border-t border-white/[0.08]">
+          <div className="relative z-10 flex items-center justify-between px-2 pb-1 pt-3 border-t border-white/[0.08]">
             {/* Small "Get started" in left bottom corner */}
             <motion.button
               whileHover={{ scale: 1.05, x: 2 }}
@@ -179,6 +179,28 @@ export default function FlipBook({
             <p className="text-xs leading-relaxed font-normal text-stone-600">
               Create your account or sign in to enter your personalized AI workspace.
             </p>
+            <div className="flex items-center gap-2 pt-2">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  goToPage(1);
+                }}
+                className="px-3.5 py-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold cursor-pointer transition-colors"
+              >
+                Sign In
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  goToPage(2);
+                }}
+                className="px-3.5 py-2 rounded-xl bg-white hover:bg-stone-100 border border-stone-300 text-stone-800 text-xs font-semibold cursor-pointer transition-colors"
+              >
+                Sign Up
+              </button>
+            </div>
           </div>
 
           <div className="relative z-10 pb-2 text-[10px] font-mono tracking-wider uppercase text-stone-400">

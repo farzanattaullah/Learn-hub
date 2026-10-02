@@ -3,24 +3,37 @@
 @layer base {
   * {
     box-sizing: border-box;
-    user-select: none;
-    -webkit-user-select: none;
   }
 
   html, body {
     margin: 0;
     padding: 0;
-    height: 100%;
+    min-height: 100%;
     width: 100%;
-    overflow: hidden;
-    touch-action: manipulation;
-    -webkit-overflow-scrolling: touch;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    overflow-x: hidden;
+    background-color: #050811;
+    color: #f1f5f9;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    scroll-behavior: smooth;
+  }
+
+  .font-display {
+    font-family: 'Syne', 'Plus Jakarta Sans', sans-serif;
+    text-wrap: balance;
+  }
+
+  .font-mono, .tabular-nums {
+    font-family: 'JetBrains Mono', monospace;
+    font-variant-numeric: tabular-nums;
   }
 }
 
 .perspective-2500 {
   perspective: 2500px;
+}
+
+.perspective-1200 {
+  perspective: 1200px;
 }
 
 .preserve-3d {
@@ -30,6 +43,59 @@
 .backface-hidden {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+}
+
+/* Orbital 3D Ring Animations matching the Cosmic Reference Theme */
+@keyframes orbitRotateSlow {
+  0% {
+    transform: rotateX(68deg) rotateY(-18deg) rotateZ(0deg);
+  }
+  100% {
+    transform: rotateX(68deg) rotateY(-18deg) rotateZ(360deg);
+  }
+}
+
+@keyframes orbitRotateReverse {
+  0% {
+    transform: rotateX(56deg) rotateY(28deg) rotateZ(360deg);
+  }
+  100% {
+    transform: rotateX(56deg) rotateY(28deg) rotateZ(0deg);
+  }
+}
+
+@keyframes orbitRotateTilted {
+  0% {
+    transform: rotateX(74deg) rotateY(8deg) rotateZ(0deg);
+  }
+  100% {
+    transform: rotateX(74deg) rotateY(8deg) rotateZ(360deg);
+  }
+}
+
+@keyframes floatGentle {
+  0%, 100% {
+    transform: translateY(0px) translateZ(30px);
+  }
+  50% {
+    transform: translateY(-8px) translateZ(30px);
+  }
+}
+
+.orbit-ring-1 {
+  animation: orbitRotateSlow 26s linear infinite;
+}
+
+.orbit-ring-2 {
+  animation: orbitRotateReverse 34s linear infinite;
+}
+
+.orbit-ring-3 {
+  animation: orbitRotateTilted 20s linear infinite;
+}
+
+.float-3d-badge {
+  animation: floatGentle 5s ease-in-out infinite;
 }
 
 /* Woven Linen Bookcloth Texture */
@@ -49,13 +115,6 @@
   background-size: 3px 3px, 3px 3px, 4px 4px;
 }
 
-/* Paper grain overlay */
-.paper-texture {
-  background-image: radial-gradient(rgba(0, 0, 0, 0.035) 1px, transparent 0);
-  background-size: 6px 6px;
-}
-
-/* Realistic stacked paper block edge texture */
 .paper-stack-edge {
   background: 
     repeating-linear-gradient(

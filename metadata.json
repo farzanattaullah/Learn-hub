@@ -1,0 +1,8 @@
+{
+  "name": "AI Study Assistant",
+  "description": "Upload. Understand. Practice. Learn. An AI-powered college study platform for PDF & TXT note analysis, exam questions, interactive MCQ quizzes, and a Source-First AI Tutor.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

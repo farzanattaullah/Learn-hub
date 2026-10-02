@@ -12,3 +12,7 @@ export function fireJuicyConfetti(originX = 0.5, originY = 0.6) {
     shapes: ['circle', 'square']
   });
 }
+
+export function fireSuccessConfetti() {
+  fireJuicyConfetti(0.5, 0.55);
+}

@@ -1,0 +1,221 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Student profile account",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique Firebase Auth user ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "Student display name",
+          "maxLength": 100
+        },
+        "email": {
+          "type": "string",
+          "description": "Student email address",
+          "maxLength": 150
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp of account creation"
+        }
+      },
+      "required": ["id", "name", "email"]
+    },
+    "StudyDocument": {
+      "title": "StudyDocument",
+      "description": "Uploaded study document with extracted content and AI analyses",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Document ID"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Owner student user ID"
+        },
+        "title": {
+          "type": "string",
+          "description": "Document title",
+          "maxLength": 200
+        },
+        "fileName": {
+          "type": "string",
+          "description": "Original file name",
+          "maxLength": 255
+        },
+        "fileType": {
+          "type": "string",
+          "description": "Type of document: PDF or TXT",
+          "enum": ["PDF", "TXT"]
+        },
+        "fileSize": {
+          "type": "number",
+          "description": "File size in bytes"
+        },
+        "extractedText": {
+          "type": "string",
+          "description": "Extracted text from document",
+          "maxLength": 200000
+        },
+        "summary": {
+          "type": "object",
+          "description": "AI generated summary and key points"
+        },
+        "importantTopics": {
+          "type": "array",
+          "description": "Extracted core topics with explanations"
+        },
+        "importantDefinitions": {
+          "type": "array",
+          "description": "Extracted important terminology definitions"
+        },
+        "importantQuestions": {
+          "type": "object",
+          "description": "Short, long and exam oriented questions"
+        },
+        "savedQuestions": {
+          "type": "array",
+          "description": "Bookmark list of saved question indices"
+        },
+        "sourcePreference": {
+          "type": "string",
+          "description": "Source answering preference",
+          "enum": ["pdf_only", "pdf_and_external"]
+        },
+        "processingStatus": {
+          "type": "string",
+          "description": "Document AI ingestion status",
+          "enum": ["processing", "ready", "failed"]
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Last updated timestamp"
+        }
+      },
+      "required": ["userId", "title", "fileName", "fileType"]
+    },
+    "Quiz": {
+      "title": "Quiz",
+      "description": "AI generated quiz and student performance",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Quiz ID"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Student owner ID"
+        },
+        "documentId": {
+          "type": "string",
+          "description": "Associated document ID"
+        },
+        "documentTitle": {
+          "type": "string",
+          "description": "Title of associated document",
+          "maxLength": 200
+        },
+        "title": {
+          "type": "string",
+          "description": "Quiz title",
+          "maxLength": 200
+        },
+        "questions": {
+          "type": "array",
+          "description": "List of quiz questions with options and explanations"
+        },
+        "score": {
+          "type": "number",
+          "description": "Student achieved score"
+        },
+        "totalQuestions": {
+          "type": "number",
+          "description": "Total count of questions"
+        },
+        "percentage": {
+          "type": "number",
+          "description": "Score percentage"
+        },
+        "userAnswers": {
+          "type": "array",
+          "description": "Indices of selected answers"
+        },
+        "completedAt": {
+          "type": "string",
+          "description": "Quiz completion timestamp"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Quiz creation timestamp"
+        }
+      },
+      "required": ["userId", "documentId", "title", "questions"]
+    },
+    "ChatSession": {
+      "title": "ChatSession",
+      "description": "AI Tutor chat history for a document",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Chat session ID"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Student user ID"
+        },
+        "documentId": {
+          "type": "string",
+          "description": "Document ID"
+        },
+        "messages": {
+          "type": "array",
+          "description": "Conversation message history"
+        },
+        "sourceMode": {
+          "type": "string",
+          "description": "Source mode preference",
+          "enum": ["pdf_only", "pdf_and_external"]
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Session creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Session update timestamp"
+        }
+      },
+      "required": ["userId", "documentId", "messages"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Student user profile information"
+    },
+    "/documents/{documentId}": {
+      "schema": "StudyDocument",
+      "description": "Uploaded study notes, summaries, and predicted questions"
+    },
+    "/quizzes/{quizId}": {
+      "schema": "Quiz",
+      "description": "AI-generated quizzes and user score tracking"
+    },
+    "/chats/{chatId}": {
+      "schema": "ChatSession",
+      "description": "Source-first AI Tutor chat sessions"
+    }
+  }
+}
