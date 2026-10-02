@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, Sparkles } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 export default function SignInForm({ onLogin, onGoToSignUp }) {
-  const { loginWithEmail, loginWithGoogle, user, showToast } = useAuth();
+  const { loginWithEmail, loginWithGoogle, loginWithDemo, user, showToast } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -42,6 +42,20 @@ export default function SignInForm({ onLogin, onGoToSignUp }) {
       setErrorMessage(err.message || 'Google sign in failed');
     } finally {
       setIsGoogleLoading(false);
+    }
+  };
+
+  const handleDemoLogin = async () => {
+    setErrorMessage('');
+    setIsLoading(true);
+    try {
+      await loginWithDemo();
+      showToast('Signed in as Demo Student (Alex Rivera)', 'success');
+      if (onLogin) onLogin(user);
+    } catch (err) {
+      setErrorMessage(err.message || 'Demo login failed');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -146,7 +160,7 @@ export default function SignInForm({ onLogin, onGoToSignUp }) {
             </div>
           </div>
 
-          <div className="pt-1">
+          <div className="pt-1 space-y-1.5">
             <button
               type="submit"
               disabled={isLoading || isGoogleLoading}
@@ -160,6 +174,16 @@ export default function SignInForm({ onLogin, onGoToSignUp }) {
                   <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
                 </>
               )}
+            </button>
+
+            <button
+              type="button"
+              onClick={handleDemoLogin}
+              disabled={isLoading || isGoogleLoading}
+              className="w-full py-2 px-3 rounded-xl border border-sky-300 bg-sky-50/80 hover:bg-sky-100 text-sky-900 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-sky-600" />
+              <span>Instant Demo Login (Alex Rivera)</span>
             </button>
           </div>
         </form>

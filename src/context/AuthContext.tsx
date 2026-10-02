@@ -39,6 +39,7 @@ interface AuthContextValue {
   loginWithGoogle: () => Promise<void>;
   loginWithEmail: (email: string, pass: string) => Promise<void>;
   registerWithEmail: (name: string, email: string, pass: string) => Promise<void>;
+  loginWithDemo: () => Promise<void>;
   loginWithToken: (token: string, user: User) => Promise<void>;
   logout: () => void;
   refreshUserData: () => Promise<void>;
@@ -220,6 +221,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const loginWithDemo = async () => {
+    try {
+      const res = await api.login('alex@university.edu', 'password123');
+      await loginWithToken(res.token, res.user);
+    } catch {
+      const demoUser: User = {
+        id: 'user_alex_rivera_demo',
+        name: 'Alex Rivera',
+        email: 'alex@university.edu',
+        createdAt: new Date().toISOString(),
+      };
+      setStoredToken('demo_token_alex_rivera');
+      setUser(demoUser);
+      await refreshUserData();
+    }
+  };
+
   const loginWithEmail = async (email: string, pass: string) => {
     try {
       // First attempt Firebase Auth
@@ -234,10 +252,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const idToken = await fbUser.getIdToken();
       setStoredToken(idToken);
       setUser(studentUser);
+      return;
     } catch (firebaseErr: any) {
       // Fallback to backend REST auth if email/password isn't enabled in Firebase console
-      const res = await api.login(email.trim(), pass);
-      await loginWithToken(res.token, res.user);
+      try {
+        const res = await api.login(email.trim(), pass);
+        await loginWithToken(res.token, res.user);
+        return;
+      } catch (backendErr: any) {
+        if (email.trim() === 'alex@university.edu' && pass === 'password123') {
+          await loginWithDemo();
+          return;
+        }
+
+        const isNotFound =
+          firebaseErr?.code === 'auth/user-not-found' ||
+          firebaseErr?.code === 'auth/invalid-credential' ||
+          backendErr?.message?.includes('not found') ||
+          backendErr?.message?.includes('Invalid email or password');
+
+        if (isNotFound) {
+          throw new Error(
+            'Account not found with this email. Please click "Sign Up" below to create your account first, or use Instant Demo Login.'
+          );
+        }
+
+        if (backendErr?.message && !backendErr.message.includes('404')) {
+          throw backendErr;
+        }
+
+        throw new Error(
+          firebaseErr?.message || backendErr?.message || 'Login failed. Please check credentials or sign up.'
+        );
+      }
     }
   };
 
@@ -290,6 +337,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         loginWithGoogle,
         loginWithEmail,
         registerWithEmail,
+        loginWithDemo,
         loginWithToken,
         logout,
         refreshUserData,

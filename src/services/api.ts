@@ -42,8 +42,19 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     headers,
   });
 
-  const data = await res.json().catch(() => ({}));
+  let data: any = {};
+  try {
+    data = await res.json();
+  } catch {
+    // Non-JSON response (e.g., HTML 404 or text)
+  }
+
   if (!res.ok) {
+    if (res.status === 404) {
+      throw new Error(
+        data.error || 'Server API endpoint returned 404. Check backend deployment or try Demo Login / Google Sign-In.'
+      );
+    }
     throw new Error(data.error || `Request failed with status ${res.status}`);
   }
   return data as T;
