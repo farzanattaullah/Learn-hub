@@ -31,7 +31,7 @@ app.use(async (_req, _res, next) => {
 });
 
 // Health & Status Route
-app.get('/api/health', (_req, res) => {
+app.get(['/api/health', '/health'], (_req, res) => {
   const hasAiKey = !!(process.env.GEMINI_API_KEY || process.env.AI_API_KEY);
   res.json({
     status: 'ok',
@@ -41,12 +41,12 @@ app.get('/api/health', (_req, res) => {
   });
 });
 
-// Mount REST API Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/documents', documentRoutes);
-app.use('/api/ai', aiRoutes);
-app.use('/api/quizzes', quizRoutes);
-app.use('/api/chats', chatRoutes);
+// Mount REST API Routes (supports both /api/* and /* for full serverless platform compatibility)
+app.use(['/api/auth', '/auth'], authRoutes);
+app.use(['/api/documents', '/documents'], documentRoutes);
+app.use(['/api/ai', '/ai'], aiRoutes);
+app.use(['/api/quizzes', '/quizzes'], quizRoutes);
+app.use(['/api/chats', '/chats'], chatRoutes);
 
 // Database offline / Mongoose fallback error middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
 import bcrypt from 'bcryptjs';
 import { UserModel } from '../models/User.js';
 import { DocumentModel } from '../models/Document.js';
@@ -34,7 +35,15 @@ export async function connectDatabase() {
   ensureLocalStoreInitialized();
 }
 
-const DATA_DIR = path.join(process.cwd(), 'server', 'data');
+const isServerless = !!(
+  process.env.VERCEL ||
+  process.env.AWS_LAMBDA_FUNCTION_NAME ||
+  process.env.LAMBDA_TASK_ROOT
+);
+
+const DATA_DIR = isServerless
+  ? path.join(os.tmpdir(), 'ai_study_assistant_data')
+  : path.join(process.cwd(), 'server', 'data');
 const STORE_FILE = path.join(DATA_DIR, 'store.json');
 
 interface StoreData {
@@ -640,7 +649,21 @@ Overfitting occurs when a model memorizes training noise and performs poorly on 
 
 function ensureLocalStoreInitialized(): StoreData {
   if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
+    try {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    } catch {
+      // directory creation handled
+    }
+  }
+  if (!fs.existsSync(STORE_FILE)) {
+    const bundledFile = path.join(process.cwd(), 'server', 'data', 'store.json');
+    if (isServerless && fs.existsSync(bundledFile)) {
+      try {
+        fs.copyFileSync(bundledFile, STORE_FILE);
+      } catch {
+        // proceed with generation fallback below
+      }
+    }
   }
   if (!fs.existsSync(STORE_FILE)) {
     const demoUserId = 'user_demo_alex_2026';
@@ -660,7 +683,11 @@ function ensureLocalStoreInitialized(): StoreData {
       quizzes: seed.quizzes,
       chats: seed.chats,
     };
-    fs.writeFileSync(STORE_FILE, JSON.stringify(initialData, null, 2), 'utf-8');
+    try {
+      fs.writeFileSync(STORE_FILE, JSON.stringify(initialData, null, 2), 'utf-8');
+    } catch (err) {
+      console.warn('[DB] Could not write initial store file:', err);
+    }
     return initialData;
   }
   try {
@@ -744,10 +771,14 @@ function readLocalStore(): StoreData {
 }
 
 function writeLocalStore(data: StoreData) {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+    fs.writeFileSync(STORE_FILE, JSON.stringify(data, null, 2), 'utf-8');
+  } catch (err) {
+    console.warn('[DB] writeLocalStore warning:', err);
   }
-  fs.writeFileSync(STORE_FILE, JSON.stringify(data, null, 2), 'utf-8');
 }
 
 export const dbStore = {
